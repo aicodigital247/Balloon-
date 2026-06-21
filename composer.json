@@ -1,0 +1,23 @@
+{
+    "name": "battlearena/saas-core",
+    "description": "Enterprise-grade Multi-Tenant Esport Tournament & Ledger API SaaS Backend",
+    "type": "project",
+    "license": "Apache-2.0",
+    "require": {
+        "php": "^8.1",
+        "ext-mysqli": "*",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "firebase/php-jwt": "^6.4",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

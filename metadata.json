@@ -1,0 +1,6 @@
+{
+  "name": "BattleArena v2",
+  "description": "A high-performance, SaaS multi-tenant esports platform & Telegram Mini App mockup featuring an immutable ledger wallet, tournament flow, and full PHP/SQL code architecture explorer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

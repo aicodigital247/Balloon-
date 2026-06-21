@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-cyber-green: #00ff88;
+  --color-cyber-purple: #8b5cf6;
+  --color-cyber-dark: #0a0a0c;
+  --color-elegant-bg: #0a0a0c;
+  --color-elegant-surface: #16161a;
+  --color-elegant-border: #1c1c21;
+  --color-elegant-border-muted: #2c2c31;
+  --color-elegant-accent: #00ff88;
+  --color-elegant-accent-blue: #0088ff;
+  --color-elegant-text-gray: #8e8e93;
+}
+
+@layer base {
+  body {
+    @apply bg-elegant-bg text-white font-sans antialiased;
+  }
+}
+
+/* Custom scrollbar targeting code logs and terminal views */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.25; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

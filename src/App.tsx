@@ -3,19 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { 
-  Shield, Play, CheckCircle, Bell, RefreshCw, Smartphone, Database, 
-  Terminal, Cpu, FileCode, Server, HelpCircle, AlertCircle
-} from "lucide-react";
+import React, { useState, useEffect } from 'react';
 import { Tenant, User, Tournament, Team, LedgerEntry, Notification, AuditLog } from './types';
 import { TENANTS, INITIAL_TOURNAMENTS, INITIAL_TEAMS } from './data';
 import PhoneSimulator from './components/PhoneSimulator';
-import DeveloperConsole from './components/DeveloperConsole';
 
 export default function App() {
-  // Shared central state
-  const [currentTenant, setCurrentTenant] = useState<Tenant>(TENANTS[0]); // Default in Nigeria
+  // Central State Management
+  const [currentTenant, setCurrentTenant] = useState<Tenant>(TENANTS[0]); // Default: Nigeria (NGN)
   const [activeTab, setActiveTab] = useState<string>('home');
   
   const [currentUser, setCurrentUser] = useState<User>({
@@ -30,24 +25,24 @@ export default function App() {
   const [tournaments, setTournaments] = useState<Tournament[]>(INITIAL_TOURNAMENTS);
   const [teams, setTeams] = useState<Team[]>(INITIAL_TEAMS);
 
-  // Synced Ledger entries initialized to match Nigerian currency scales
+  // Synced Immutable Ledger initialized to mimic authentic Nigeria deposit entries
   const [ledger, setLedger] = useState<LedgerEntry[]>([
     { 
       id: 1, 
       walletId: "BA-981245722-LEDG", 
       reference: "BA-LEDG-INIT-90082", 
       type: 'credit', 
-      amount: 5000, 
+      amount: 15000, 
       description: "Initial Monnify Bank Transfer Credit", 
       createdAt: new Date(Date.now() - 3600000 * 2).toISOString() 
     },
     { 
       id: 2, 
       walletId: "BA-981245722-LEDG", 
-      reference: "REG-tour_02", 
+      reference: "REG-tour_01", 
       type: 'debit', 
-      amount: 1000, 
-      description: "Match Entry Stake Fee: Apex Arena Elite Trios", 
+      amount: 1500, 
+      description: "Match Entry Stake Fee: Lagos Masters Elite Purgatory", 
       createdAt: new Date(Date.now() - 3600000).toISOString() 
     }
   ]);
@@ -59,7 +54,7 @@ export default function App() {
       tenantId: "ba_nigeria",
       userId: 981245722,
       type: "wallet",
-      message: "Deposit Confirmation: Credit ₦5,000 received via Monnify webhook integration.",
+      message: "Deposit Confirmation: Credit ₦15,000 received via Monnify webhook integration.",
       createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
       isBotSent: true
     },
@@ -74,7 +69,7 @@ export default function App() {
     }
   ]);
 
-  // Dynamic telemetry log checks
+  // Telemetry Audit log triggers
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([
     {
       id: "log_1",
@@ -136,13 +131,13 @@ export default function App() {
       `INSERT INTO wallet_ledger (wallet_id, reference, type, amount, description) VALUES ('BA-${currentUser.id}-LEDG', '${ref}', 'credit', ${amount}, '${description}')`
     );
 
-    // Push notification (Telegram bot)
+    // Push notification (Telegram bot chat alert)
     const newNotification: Notification = {
       id: `not_${Date.now()}`,
       tenantId: currentTenant.id,
       userId: currentUser.id,
       type: 'wallet',
-      message: `Credit transaction received: Received ${currentTenant.currencySymbol}${amount.toLocaleString()} via instant gateway.`,
+      message: `Credit transaction received: Received ${currentTenant.currencySymbol}${amount.toLocaleString()} via instant virtual gateway.`,
       createdAt: new Date().toISOString(),
       isBotSent: true
     };
@@ -228,9 +223,8 @@ export default function App() {
     pushAuditLog("AI_COMMENTATOR_REQ", `Requesting dramatic commentary streams match ID ${id} between @Gladiator22 and a random challenger.`);
 
     try {
-      // Simulate/trigger matches gameplay
-      const randomOppponents = ["NaijaSniper", "LagosPhantom_Pro", "GoldCoastFighter", "SafariMage"];
-      const opponent = randomOppponents[Math.floor(Math.random() * randomOppponents.length)];
+      const randomOpponents = ["NaijaSniper", "LagosPhantom_Pro", "GoldCoastFighter", "SafariMage"];
+      const opponent = randomOpponents[Math.floor(Math.random() * randomOpponents.length)];
       
       const score1 = Math.floor(Math.random() * 5) + 3;
       const score2 = Math.floor(Math.random() * 3);
@@ -262,7 +256,7 @@ export default function App() {
           if (t.id === id) {
             return { 
               ...t, 
-              status: 'playing',
+              status: 'completed',
               winnerPlayerName: score1 > score2 ? currentUser.username : opponent
             };
           }
@@ -284,7 +278,7 @@ export default function App() {
       id: `team_${Date.now()}`,
       tenantId: currentTenant.id,
       name,
-      logoUrl: ["💎", "🏆", "🎯", "🔥", "⚡"][Math.floor(Math.random() * 5)],
+      logoUrl: ["💀", "🎭", "🗡️", "🎯", "🔥"][Math.floor(Math.random() * 5)],
       leaderId: currentUser.id,
       memberNames: ["Gladiator22", "GuestGamer_1", "GuestGamer_2"]
     };
@@ -292,7 +286,7 @@ export default function App() {
     setTeams(prev => [...prev, newTeam]);
     pushAuditLog(
       "TEAM_CREATION", 
-      `Committed new squad ${name} on tenant ${currentTenant.id}.`,
+      `Committed new squad "${name}" on tenant ${currentTenant.id}.`,
       `INSERT INTO teams (id, tenant_id, name, logo_url, leader_id) VALUES ('${newTeam.id}', '${currentTenant.id}', '${name}', '${newTeam.logoUrl}', ${currentUser.id})`
     );
   };
@@ -314,7 +308,7 @@ export default function App() {
               tenantId: currentTenant.id,
               userId: currentUser.id,
               type: 'match',
-              message: `🔑 ROOM KEY RELEASED: Match "${t.title}" is ready. Custom Code is ${generatedRoom}. Enter queue immediately.`,
+              message: `🔑 ROOM KEY RELEASED: Match "${t.title}" is ready. Custom Lobby Code is ${generatedRoom}. Join queue immediately.`,
               createdAt: new Date().toISOString(),
               isBotSent: true
             };
@@ -351,10 +345,6 @@ export default function App() {
           `SELECT username, SUM(amount) as total_earnings FROM wallet_ledger JOIN wallets ON wallets.id = wallet_ledger.wallet_id JOIN users ON users.id = wallets.user_id WHERE users.tenant_id = '${currentTenant.id}' GROUP BY username ORDER BY total_earnings DESC`
         );
       }, 400);
-    } else {
-      setTimeout(() => {
-        pushAuditLog("CRON_JOB_COMPLETE", `cron/${scriptName} prunes completed. Directories are spotless.`);
-      }, 300);
     }
   };
 
@@ -389,7 +379,7 @@ export default function App() {
       maxParticipants: 32,
       status: "upcoming",
       description: `Elite arena match in regional node ${currentTenant.name}. Strictly atomic ledger accounting protects entry fees.`,
-      scheduledTime: "20:00 Local Time"
+      scheduledTime: "18:00 Local Time"
     };
 
     setTournaments(prev => [...prev, newTour]);
@@ -404,7 +394,6 @@ export default function App() {
     const match = tournaments.find(t=>t.id===tournamentId);
     if (!match) return;
 
-    // Credit winner! If the winner is our simulated user (Gladiator22), run the ledger deposit!
     const isCurrentUserWinner = winnerName.toLowerCase() === currentUser.username.toLowerCase();
     
     setTournaments(prev => prev.map(t => {
@@ -427,17 +416,6 @@ export default function App() {
       `Paid prize pool of ${currentTenant.currencySymbol}${match.prizePool.toLocaleString()} to @${winnerName}. Closed match record.`,
       `UPDATE tournaments SET status='completed', winner_name='${winnerName}' WHERE id='${tournamentId}'; INSERT INTO wallet_ledger(wallet_id, reference, type, amount, description) VALUES(...)`
     );
-
-    const botAnnouncement: Notification = {
-      id: `not_payout_${Date.now()}`,
-      tenantId: currentTenant.id,
-      userId: currentUser.id,
-      type: 'referral',
-      message: `🏆 VICTORY ANNOUNCEMENT: @${winnerName} won the "${match.title}" and secured the grand prize pool of ${currentTenant.currencySymbol}${match.prizePool.toLocaleString()}! Ledger updated.`,
-      createdAt: new Date().toISOString(),
-      isBotSent: true
-    };
-    setNotifications(prev => [botAnnouncement, ...prev]);
   };
 
   const handleAdminReleaseRoom = (id: string) => {
@@ -454,22 +432,11 @@ export default function App() {
       `Admin released custom lobby room coordinates for Match ID ${id}.`,
       `UPDATE tournaments SET status='room_released', room_code='${code}' WHERE id='${id}'`
     );
-
-    const botAlert: Notification = {
-      id: `not_room_${Date.now()}`,
-      tenantId: currentTenant.id,
-      userId: currentUser.id,
-      type: 'match',
-      message: `🔑 LOBBY DETECTED: Room Code [${code}] released for your match "${tournaments.find(t=>t.id===id)?.title}". Play ready!`,
-      createdAt: new Date().toISOString(),
-      isBotSent: true
-    };
-    setNotifications(prev => [botAlert, ...prev]);
   };
 
   const handleGenerateAITournament = async (game: string, prize: number) => {
     setIsGeneratingTournamentAI(true);
-    pushAuditLog("AI_TOURNAMENT_REQ", `Invoking Gemini API on backend to draft premium tournament lore for game "${game}" with prize ${prize}.`);
+    pushAuditLog("AI_TOURNAMENT_REQ", `Invoking Gemini API on backend to draft premium tournament lore for game "${game}" with prize ₦${prize.toLocaleString()}.`);
 
     try {
       const response = await fetch("/api/generate-tournament", {
@@ -478,21 +445,19 @@ export default function App() {
         body: JSON.stringify({
           tenantName: currentTenant.name,
           gameName: game,
-          prizePool: `${currentTenant.currencySymbol}${prize.toLocaleString()}`
+          prizePool: `₦${prize.toLocaleString()}`
         })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Build tournament with created AI description
         const cleanDesc = data.description || `Claim regional glory inside BattleArena ${currentTenant.name}.`;
         const uppercaseGameWord = game.toUpperCase().split(' ')[0];
         const draftTitle = `${currentTenant.country} ${uppercaseGameWord} Championship Cup`;
         
         handleAdminCreateTournament(draftTitle, game, prize / 10, prize);
         
-        // Update the description of the newly created tournament (which is the last element added)
         setTournaments(prev => {
           const copied = [...prev];
           if (copied.length > 0) {
@@ -514,7 +479,6 @@ export default function App() {
     }
   };
 
-  // Switch tenant changes currency multiplier on ledger init to scale accurately
   const handleTriggerLedgerAdd = (type: 'credit' | 'debit', amount: number, description: string) => {
     if (type === 'credit') {
       handleDeposit(amount, description);
@@ -523,109 +487,62 @@ export default function App() {
     }
   };
 
-  const handleTenantSwitch = (newTenant: Tenant) => {
-    setCurrentTenant(newTenant);
-    pushAuditLog(
-      "SaaS_TENANT_MIGRATION", 
-      `Dispatched router redirection context to regional sub-node: ${newTenant.id}. Scoping local currency boundaries.`,
-      `SELECT * FROM tenants WHERE id = '${newTenant.id}'`
-    );
-  };
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-cyan-500 selection:text-slate-950 font-sans">
+    <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col justify-center items-center p-4 relative antialiased select-none font-sans overflow-y-auto">
       
-      {/* Dynamic Background Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.45)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.45)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-      
-      {/* Core Top Navigation Header bar */}
-      <header className="relative border-b border-slate-900 bg-slate-950/80 backdrop-blur-md px-4 py-3.5 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <span className="p-1.5 rounded-xl bg-cyan-950 text-cyan-400 border border-cyan-800/30 font-display font-bold text-lg select-none">
-              BA
-            </span>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-sm font-semibold tracking-wider font-display text-slate-100 uppercase sm:text-base">BattleArena v2</h1>
-                <span className="bg-emerald-950 text-emerald-400 font-bold font-mono text-[9px] px-1.5 py-0.2 rounded-full border border-emerald-900/30">
-                  MOBILE_ONLY READY
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-500">Telegram Mini App Multi-Tenant SaaS & Fintech-Grade Authority</p>
-            </div>
-          </div>
+      {/* Decorative Shifting Background Glow Accents */}
+      <div className="absolute top-1/4 left-1/4 h-[350px] w-[350px] rounded-full bg-[#facc15]/3 blur-[140px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/3 blur-[160px] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.15)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none"></div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="bg-slate-905 border border-slate-800 px-3 py-1 rounded-full text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Ledger: Authoritative</span>
-            </span>
-            <span className="bg-slate-905 border border-slate-800 px-3 py-1 rounded-full text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-              <span>Tenant:</span>
-              <span className="text-cyan-400 font-bold font-mono uppercase">{currentTenant.currency} node</span>
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Dual Container Bento Layout */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8 relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-start min-h-0">
+      {/* Main Single Column Phone Simulation Wrapper */}
+      <div className="relative z-10 w-full flex flex-col items-center">
         
-        {/* Left Column: Telegram Mini App Device Frame Simulator */}
-        <div className="lg:col-span-5 flex flex-col justify-center">
-          <div className="text-center mb-4 select-none">
-            <h4 className="text-xs uppercase font-mono text-slate-500 tracking-widest font-bold">Mini App Emulator Viewport</h4>
-            <p className="text-[11px] text-zinc-500 mt-0.5">Exactly emulating a mobile user inside the Telegram Webview environment.</p>
-          </div>
-
-          <PhoneSimulator 
-            currentTenant={currentTenant}
-            currentUser={currentUser}
-            tournaments={tournaments}
-            teams={teams}
-            ledger={ledger}
-            notifications={notifications}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            onDeposit={handleDeposit}
-            onWithdraw={handleWithdraw}
-            onRegisterTournament={handleRegisterTournament}
-            onPlayTournament={handlePlayTournament}
-            onAddTeam={handleAddTeam}
-            commentaryLogs={commentaryLogs}
-            isGeneratingCommentary={isGeneratingCommentary}
-          />
+        {/* Upper Brand Badge bar */}
+        <div className="text-center mb-6 max-w-sm">
+          <h1 className="text-[17px] font-black font-display text-white uppercase tracking-wider flex items-center justify-center gap-1.5 leading-none">
+            ⚡ BattleArena Guild
+          </h1>
+          <p className="text-[10.5px] text-zinc-500 font-mono mt-1 leading-snug">
+            Immutable Ledger Stakes // Nigeria Nodes Gateways // Tele-Auth Core
+          </p>
         </div>
 
-        {/* Right Column: Dynamic Developer Interactive Sandbox */}
-        <div className="lg:col-span-7 flex flex-col h-full lg:max-h-[730px]">
-          <DeveloperConsole 
-            currentTenant={currentTenant}
-            setCurrentTenant={handleTenantSwitch}
-            tenants={TENANTS}
-            currentUser={currentUser}
-            tournaments={tournaments}
-            teams={teams}
-            ledger={ledger}
-            auditLogs={auditLogs}
-            onTriggerLedgerAdd={handleTriggerLedgerAdd}
-            onRunCron={handleRunCron}
-            onClearDatabase={handleClearDatabase}
-            onAdminCreateTournament={handleAdminCreateTournament}
-            onAdminPayoutTournament={handleAdminPayoutTournament}
-            onAdminReleaseRoom={handleAdminReleaseRoom}
-            isGeneratingTournamentAI={isGeneratingTournamentAI}
-            onGenerateAITournament={handleGenerateAITournament}
-          />
+        {/* Instantiated Mobile Simulator */}
+        <PhoneSimulator 
+          currentTenant={currentTenant}
+          currentUser={currentUser}
+          tournaments={tournaments}
+          teams={teams}
+          ledger={ledger}
+          notifications={notifications}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onDeposit={handleDeposit}
+          onWithdraw={handleWithdraw}
+          onRegisterTournament={handleRegisterTournament}
+          onPlayTournament={handlePlayTournament}
+          onAddTeam={handleAddTeam}
+          commentaryLogs={commentaryLogs}
+          isGeneratingCommentary={isGeneratingCommentary}
+          // SaaS parameters
+          auditLogs={auditLogs}
+          onTriggerLedgerAdd={handleTriggerLedgerAdd}
+          onRunCron={handleRunCron}
+          onClearDatabase={handleClearDatabase}
+          onAdminCreateTournament={handleAdminCreateTournament}
+          onAdminPayoutTournament={handleAdminPayoutTournament}
+          onAdminReleaseRoom={handleAdminReleaseRoom}
+          isGeneratingTournamentAI={isGeneratingTournamentAI}
+          onGenerateAITournament={handleGenerateAITournament}
+        />
+
+        {/* Bottom Small Compliance Label */}
+        <div className="text-center text-[9px] font-semibold text-zinc-650 opacity-60 font-mono tracking-widest mt-4 uppercase">
+          BattleArena Tele-Auth System v2 // Node 3000 Active
         </div>
 
-      </main>
-
-      {/* Micro system credentials footer bar */}
-      <footer className="border-t border-slate-900 bg-slate-950/40 py-4 px-4 text-center text-[10px] text-zinc-600 font-mono tracking-wider select-none relative mt-auto">
-        BATTLEARENA v2 FINTECH INFRASTRUCTURE GATES // 100% MOBILE-NATIVE INTERACTION SECURED VIA SHA256 // DEVELOPED UNDER NODE+REACT CONTAINER RUNNING ON PORT 3000
-      </footer>
+      </div>
 
     </div>
   );
